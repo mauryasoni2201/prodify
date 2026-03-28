@@ -6,7 +6,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, baseUrl }) => {
   if (totalPages <= 1) return null;
 
   const createPageUrl = (page) => {
-    const url = new URL(baseUrl, "http://localhost:3000"); // Dummy base for URL construction
+    const url = new URL(baseUrl, process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
     url.searchParams.set("page", page);
     return `${url.pathname}${url.search}`;
   };
