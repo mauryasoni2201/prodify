@@ -1,15 +1,7 @@
-import Link from "next/link";
-
-const Pagination = ({ totalItems, itemsPerPage, currentPage, baseUrl }) => {
+const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   if (totalPages <= 1) return null;
-
-  const createPageUrl = (page) => {
-    const url = new URL(baseUrl, process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
-    url.searchParams.set("page", page);
-    return `${url.pathname}${url.search}`;
-  };
 
   const pages = Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
     let pageNum;
@@ -22,56 +14,42 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, baseUrl }) => {
 
   return (
     <div className="flex items-center justify-center gap-2 mt-16">
-      <Link
-        href={createPageUrl(Math.max(1, currentPage - 1))}
-        className={`w-12 h-12 flex items-center justify-center rounded-xl border border-zinc-100 transition-all ${currentPage === 1 ? "opacity-50 pointer-events-none" : "hover:bg-zinc-50 hover:border-secondary shadow-sm"}`}
+      <button
+        type="button"
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        className="w-12 h-12 flex items-center justify-center rounded-xl border border-zinc-100 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-50 hover:border-secondary shadow-sm"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2.5"
-            d="M15 19l-7-7 7-7"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
         </svg>
-      </Link>
+      </button>
 
       {pages.map((p) => (
-        <Link
+        <button
           key={p}
-          href={createPageUrl(p)}
-          className={`w-12 h-12 flex items-center justify-center rounded-xl font-black text-sm transition-all border ${
+          type="button"
+          onClick={() => onPageChange(p)}
+          className={`w-12 h-12 flex items-center justify-center rounded-xl font-black text-sm transition-all border cursor-pointer ${
             currentPage === p
               ? "bg-secondary border-secondary text-white shadow-lg shadow-secondary/20"
               : "bg-white border-zinc-100 text-primary hover:border-secondary hover:text-secondary"
           }`}
         >
           {p}
-        </Link>
+        </button>
       ))}
 
-      <Link
-        href={createPageUrl(Math.min(totalPages, currentPage + 1))}
-        className={`w-12 h-12 flex items-center justify-center rounded-xl border border-zinc-100 transition-all ${currentPage === totalPages ? "opacity-50 pointer-events-none" : "hover:bg-zinc-50 hover:border-secondary shadow-sm"}`}
+      <button
+        type="button"
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        className="w-12 h-12 flex items-center justify-center rounded-xl border border-zinc-100 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-zinc-50 hover:border-secondary shadow-sm"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
         </svg>
-      </Link>
+      </button>
     </div>
   );
 };

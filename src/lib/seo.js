@@ -16,7 +16,7 @@ export const defaultMetadata = {
     siteName: "Prodify",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
         alt: "Prodify - Premium Shopping Experience",
@@ -29,7 +29,7 @@ export const defaultMetadata = {
     card: "summary_large_image",
     title: "Prodify",
     description: "Discover the best products online with Prodify.",
-    images: ["/og-image.png"],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
