@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 
-const ProductFilters = ({ q, sortBy, order, onUpdate }) => {
+const ProductFilters = ({ q, sortBy, order, onUpdate, onClear }) => {
   const [searchTerm, setSearchTerm] = useState(q);
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchTerm(q || "");
   }, [q]);
 
@@ -15,6 +15,8 @@ const ProductFilters = ({ q, sortBy, order, onUpdate }) => {
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [searchTerm, q, onUpdate]);
+
+  const hasActiveFilters = q || sortBy || order;
 
   return (
     <div
@@ -38,12 +40,7 @@ const ProductFilters = ({ q, sortBy, order, onUpdate }) => {
           viewBox="0 0 24 24"
           stroke="currentColor"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2.5"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
       <div className="flex items-center gap-3 w-full lg:w-auto" suppressHydrationWarning>
@@ -67,12 +64,7 @@ const ProductFilters = ({ q, sortBy, order, onUpdate }) => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2.5"
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
           </svg>
         </div>
         <div className="relative group" suppressHydrationWarning>
@@ -94,16 +86,21 @@ const ProductFilters = ({ q, sortBy, order, onUpdate }) => {
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2.5"
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
           </svg>
         </div>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={onClear}
+            className="h-10 px-4 rounded-xl border border-zinc-200 bg-white text-xs font-bold text-zinc-500 hover:border-red-300 hover:text-red-500 transition-all cursor-pointer whitespace-nowrap shadow-sm"
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
     </div>
   );
 };
+
 export default ProductFilters;

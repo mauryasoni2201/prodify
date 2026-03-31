@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
 import { getProducts, searchProducts, getProductsByCategory } from "@/apis/products/product.api";
 import ProductListing from "@/components/ProductListing";
 import Pagination from "@/components/Pagination";
@@ -8,15 +7,11 @@ import ProductFilters from "@/components/shop/ProductFilters";
 import { ShopLoader, ShopError, ShopEmpty } from "@/components/shop/ProductShopState";
 import PageLayout from "@/components/common/PageLayout";
 
-function ProductsContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+const DEFAULT_FILTERS = { page: 1, q: "", sortBy: "", order: "", category: "" };
 
-  const page = Number(searchParams.get("page")) || 1;
-  const q = searchParams.get("q") || "";
-  const sortBy = searchParams.get("sortBy") || "";
-  const order = searchParams.get("order") || "";
-  const category = searchParams.get("category") || "";
+export default function ProductsPage() {
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const { page, q, sortBy, order, category } = filters;
 
   const [data, setData] = useState({ products: [], total: 0 });
   const [loading, setLoading] = useState(true);
@@ -45,24 +40,24 @@ function ProductsContent() {
 
   useEffect(() => {
     fetchItems();
-  }, [page, q, sortBy, order, category, fetchItems]);
+  }, [fetchItems]);
 
   const updateFilters = (newFilters) => {
-    const params = new URLSearchParams(searchParams.toString());
-    Object.entries(newFilters).forEach(([key, val]) => {
-      if (val) params.set(key, val);
-      else params.delete(key);
-    });
-    if (!newFilters.page) params.set("page", "1");
-    router.push(`/products?${params.toString()}`);
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+      page: newFilters.page ?? 1,
+    }));
   };
+
+  const clearFilters = () => setFilters(DEFAULT_FILTERS);
 
   const breadcrumbItems = [{ label: "Products", href: category ? "/products" : null }];
   if (category) breadcrumbItems.push({ label: category });
 
   return (
     <PageLayout breadcrumbItems={breadcrumbItems}>
-      <ProductFilters q={q} sortBy={sortBy} order={order} onUpdate={updateFilters} />
+      <ProductFilters q={q} sortBy={sortBy} order={order} onUpdate={updateFilters} onClear={clearFilters} />
       {loading ? (
         <ShopLoader />
       ) : error ? (
@@ -82,20 +77,12 @@ function ProductsContent() {
             totalItems={data.total}
             itemsPerPage={12}
             currentPage={page}
-            baseUrl="/products"
+            onPageChange={(p) => updateFilters({ page: p })}
           />
         </>
       ) : (
-        <ShopEmpty onClear={() => router.push("/products")} />
+        <ShopEmpty onClear={clearFilters} />
       )}
     </PageLayout>
-  );
-}
-
-export default function ProductsPage() {
-  return (
-    <Suspense fallback={<ShopLoader />}>
-      <ProductsContent />
-    </Suspense>
   );
 }
